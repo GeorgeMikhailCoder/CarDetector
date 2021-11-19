@@ -1,2 +1,7 @@
 *.mp4
 *.asv
+*.bmp
+
+im2rgb.m
+rgb2im.m
+extZeros.m

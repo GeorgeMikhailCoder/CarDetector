@@ -1,4 +1,17 @@
 close all
+
+speed = 3; % скорость движения в метрах в секунду
+heigh = 50; % высота в метрах
+alpha = 84; % горизонтальный угол обзора камеры в градусах
+beta = 84; % вертикальный угол обзора камеры в градусах
+FPS = 24; % частота кадров видеосъёмки
+R = 2; % радиус отождествления точек в метрах
+
+mapLength = tand(beta/2)*heigh*2;
+mapWidth = tand(alpha/2)*heigh*2;
+
+R = mapLength/camHeigh * R;
+
 % создаем объект для чтения видео
 reader = VideoReader('src.mp4');
 
@@ -8,32 +21,34 @@ reader = VideoReader('src.mp4');
 if ~reader.hasFrame()
     return
 end
-prevFrame = reader.readFrame(); 
+prevFrame = reader.readFrame();
+prevDif = zeros(size(prevFrame));
 
 s = size(prevFrame);
-camHeigh = s(1)
-camWidth = s(2)
-vpx = 1;
+camHeigh = s(1);
+camWidth = s(2);
 
-f= figure();
+vpx = round(camHeigh/mapLength * speed);
+vpx = 1
+
+
 
 while reader.hasFrame()
    frame = reader.readFrame();
-   subFrame = frame(vpx:camHeigh,:);
+   difFrame = getDifFrame(frame, prevFrame, vpx);
    
-   subplot(2,2,1)
-   imshow(prevFrame)
+   prevCenters = getCenterMassList(prevDif);
+   centers = getCenterMassList(difFrame);
    
-   subplot(2,2,2)
-   imshow(frame)
    
-   subplot(2,2,3) 
-   imshow(frame-prevFrame);
-   
-   subplot(2,2,4) 
-   imshow(frame-prevFrame);
-   
-   prevFrame = zeros(size(frame));
+   imshow(frame);
+   if (centers)
+   hold on
+   plot(centers(:,1), centers(:,2), 'r*')
+   hold off
+   end
    prevFrame = frame;
-   pause(2)
+   prevDif = difFrame;
+   pause(0.001)
+
 end
