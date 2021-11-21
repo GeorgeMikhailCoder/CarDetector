@@ -10,7 +10,7 @@ R = 2; % радиус отождествления точек в метрах
 mapLength = tand(beta/2)*heigh*2;
 mapWidth = tand(alpha/2)*heigh*2;
 
-R = mapLength/camHeigh * R;
+
 
 % создаем объект для чтения видео
 reader = VideoReader('src.mp4');
@@ -22,33 +22,39 @@ if ~reader.hasFrame()
     return
 end
 prevFrame = reader.readFrame();
-prevDif = zeros(size(prevFrame));
+prevDif = [];
+prevCenters = [];
 
 s = size(prevFrame);
 camHeigh = s(1);
 camWidth = s(2);
 
+R = mapLength/camHeigh * R;
 vpx = round(camHeigh/mapLength * speed);
 vpx = 1
-
+R = 50
 
 
 while reader.hasFrame()
    frame = reader.readFrame();
-   difFrame = getDifFrame(frame, prevFrame, vpx);
    
-   prevCenters = getCenterMassList(prevDif);
+   frame = rgb2gray(frame);
+   frame = imadjust(frame,[0 1], [0 1], 5);
+   difFrame = getDifFrame(frame, prevFrame, vpx);   
+   
    centers = getCenterMassList(difFrame);
-   
+   centers1 = centers;
+   [centers,objects] = groupCenters(centers, R);
    
    imshow(frame);
-   if (centers)
-   hold on
-   plot(centers(:,1), centers(:,2), 'r*')
-   hold off
+   hold on 
+   if (length(centers)~=0)
+       plot(centers1(:,1), centers1(:,2), 'b*');
+       plot(centers(:,1), centers(:,2), 'r*');
    end
+   
    prevFrame = frame;
    prevDif = difFrame;
+   prevCenters = centers;
    pause(0.001)
-
 end
