@@ -5,3 +5,5 @@
 im2rgb.m
 rgb2im.m
 extZeros.m
+CarObject.m
+centers2map.m

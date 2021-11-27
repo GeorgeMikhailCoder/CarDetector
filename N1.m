@@ -7,8 +7,8 @@ beta = 84; % вертикальный угол обзора камеры в градусах
 FPS = 24; % частота кадров видеосъёмки
 R = 2; % радиус отождествления точек в метрах
 
-mapLength = tand(beta/2)*heigh*2;
-mapWidth = tand(alpha/2)*heigh*2;
+mapLength = tand(beta/2)*heigh*2; % длина карты на плоскости
+mapWidth = tand(alpha/2)*heigh*2; % ширина карты на плоскости
 
 
 
@@ -22,39 +22,55 @@ if ~reader.hasFrame()
     return
 end
 prevFrame = reader.readFrame();
-prevDif = [];
 prevCenters = [];
 
 s = size(prevFrame);
-camHeigh = s(1);
-camWidth = s(2);
+camHeigh = s(1)
+camWidth = s(2)
 
 R = mapLength/camHeigh * R;
 vpx = round(camHeigh/mapLength * speed);
 vpx = 1
-R = 50
+R = 20
 
 
 while reader.hasFrame()
    frame = reader.readFrame();
-   
    frame = rgb2gray(frame);
    frame = imadjust(frame,[0 1], [0 1], 5);
    difFrame = getDifFrame(frame, prevFrame, vpx);   
-   
    centers = getCenterMassList(difFrame);
    centers1 = centers;
-   [centers,objects] = groupCenters(centers, R);
+   [centers,~] = groupCenters2(centers, R);
+   
+   pairs = makePairs(centers, prevCenters, R);
+   pairs
+   cars = makeCars(pairs, mapLength, mapWidth, camHeigh, camWidth, heigh);
+   cars
+   
+   
+%    velocities = zeros(length(objects),2);
+%    for i=1:length(objects)
+%        pair = objects{i}
+%        if (size(pair,1)~=2)
+%            disp("Error")
+%        else
+%            velocities(i,:) = pair(2,:) - pair(1,:);
+%        end
+%    end
+%    velocities
    
    imshow(frame);
-   hold on 
+   hold on
    if (length(centers)~=0)
        plot(centers1(:,1), centers1(:,2), 'b*');
-       plot(centers(:,1), centers(:,2), 'r*');
+       drawCars(cars);
+   end
+   if (length(prevCenters)~=0)
+       plot(prevCenters(:,1), prevCenters(:,2), 'g*');
    end
    
    prevFrame = frame;
-   prevDif = difFrame;
    prevCenters = centers;
    pause(0.001)
 end

@@ -1,4 +1,4 @@
-function [resMeans, resObjectPoints] = groupCenters(centers, R)
+function [resMeans, resObjectPoints] = groupCenters2(centers, R)
 if (nargin==0)
 %     centers = [
 %   329.0000  257.0000;
@@ -46,7 +46,7 @@ if (s1==0)
 else 
 if (s1==1)
     resMeans = centers;
-    resObjectPoints = centers;
+    resObjectPoints = {centers};
 else
 % a = [1,2,3,5,7,11,13,14,17,18];
 % a =[
@@ -61,33 +61,39 @@ resObj = [];
 resM = [];
 object = [centers(1,:)];
 prev = centers(1,:);
-for i=2:1:length(centers)
-   elem = centers(i,:);
-   if (elem - prev <=R)
-       if (sum((elem - prev).^2)< R^2)
-           object = [object; elem];
-           prev = elem;
-           continue
-       end
+
+
+groupNum = zeros(length(centers),1);
+
+k = 1;
+for i=1:length(centers)
+   if (groupNum(i)==0)
+       groupNum(i) = k;
+       k=k+1;
    end
       
-   resObj = [resObj; {object}];
-   mx = mean(object(:,1));
-   my = mean(object(:,2));
-   object = elem;
-   resM = [resM; mx,my];
-   prev = elem;
+   for j=i+1:length(centers)
+       if (groupNum(j)~=0)
+           continue
+       end
+       
+      a = centers(i);
+      b = centers(j);
+      if (sum((a - b).^2)<R^2)
+          groupNum(j) = groupNum(i);
+      end
    end
-   
-resObj = [resObj; {object}];
-% for i=1:1:length(resObj)
-%     el = resObj(i);
-%     el{1};
-% end
+end
 
-mx = mean(object(:,1));
-my = mean(object(:,2));
-resM=[resM; mx,my];
+resObj =cell(max(groupNum),1);
+resM = zeros(length(resObj), 2);
+for i=1:length(resObj)
+    obj = centers(groupNum==i,:);
+    resObj{i} = obj;
+    resM(i,1) = mean(obj(:,1));
+    resM(i,2) = mean(obj(:,2));
+end
+
 resMeans = resM;
 resObjectPoints = resObj;
 end
