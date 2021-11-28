@@ -1,7 +1,8 @@
 function res = drawCars(cars)
 if (nargin==0)
-   cars = [{[23 45], 3, 1},
-       {[67 78], 8, 9}];
+   cars = [{[22 44], 3, 1},
+       {[99 88], 12, 13},
+       {[66 77], 8, 9}];
 %    cars = [];
 end
 
@@ -10,7 +11,7 @@ if (isempty(cars))
 end
 
 centers = [cars{:,1}];
-centers = reshape(centers,[length(centers)/2, 2]);
+centers = reshape(centers,[2,length(centers)/2])';
 
 distances = [cars{:,2}];
 velocities = [cars{:,3}];

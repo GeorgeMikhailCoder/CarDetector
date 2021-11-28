@@ -7,3 +7,4 @@ rgb2im.m
 extZeros.m
 CarObject.m
 centers2map.m
+groupCenters.m

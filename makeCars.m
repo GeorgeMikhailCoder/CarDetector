@@ -21,14 +21,13 @@ end
 
 
 
-kL = mapLength/camHeigh;
 kW = mapWidth/camWidth;
+kL = mapLength/camHeigh;
 camCoord = [mapWidth/2, mapLength/2];
 
 res = [];
-a = length(pairs)
 for i=1:length(pairs)
-   pair = pairs{i,:}
+   pair = pairs{i,:};
    
    if (size(pair,1)==2)
        coord = pair(1,:);
@@ -45,7 +44,7 @@ for i=1:length(pairs)
        v2 = kL*v(2);
        v = sqrt(v1^2 + v2^2);
        
-       car = {pair(1,:), d, v}   
+       car = {pair(1,:), d, v};
        res = [res; car];
    end
 end

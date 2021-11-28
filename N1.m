@@ -36,17 +36,26 @@ R = 20
 
 while reader.hasFrame()
    frame = reader.readFrame();
+    
    frame = rgb2gray(frame);
    frame = imadjust(frame,[0 1], [0 1], 5);
    difFrame = getDifFrame(frame, prevFrame, vpx);   
    centers = getCenterMassList(difFrame);
-   centers1 = centers;
+   centers1 = centers
    [centers,~] = groupCenters2(centers, R);
    
    pairs = makePairs(centers, prevCenters, R);
-   pairs
+   if (size(centers,1)~=0)
+     c1 = centers(1,:)
+   end
+   if (length(pairs)~=0)
+       p1 = pairs{1}
+   end
+   
    cars = makeCars(pairs, mapLength, mapWidth, camHeigh, camWidth, heigh);
-   cars
+   if (size(cars,1)~=0)
+       cr1 = cars{1}
+   end
    
    
 %    velocities = zeros(length(objects),2);
@@ -63,7 +72,14 @@ while reader.hasFrame()
    imshow(frame);
    hold on
    if (length(centers)~=0)
-       plot(centers1(:,1), centers1(:,2), 'b*');
+%        plot(centers1(:,1), centers1(:,2), 'b*');
+%        plot(centers(:,1), centers(:,2), 'g*');
+       
+       for i=1:length(pairs)
+          pair = pairs{i};
+%           plot(pair(1,1),pair(1,2), 'r*')
+       end
+       
        drawCars(cars);
    end
    if (length(prevCenters)~=0)

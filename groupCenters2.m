@@ -38,13 +38,11 @@ R = 3;
 
 end
 
-s = size(centers);
-s1 = s(1);
-if (s1==0)
+if (size(centers,1)==0)
     resMeans = [];
     resObjectPoints = [];
 else 
-if (s1==1)
+if (size(centers,1)==1)
     resMeans = centers;
     resObjectPoints = {centers};
 else
