@@ -52,7 +52,7 @@ while reader.hasFrame()
    cars = makeCars(pairs, mapLength, mapWidth, camHeigh, camWidth, heigh); % по координатам центров вычисляем информацию о машинах
 
   % отрисовка 
-   imshow(difFrame);
+   imshow(originFrame);
    hold on
    if (length(centers)~=0)
        drawCars(cars); % рисуем центры машин и текст
