@@ -46,13 +46,13 @@ while reader.hasFrame()
    frame = imadjust(frame,[0 1], [0 1], 5); % повышение контрастности
    difFrame = getDifFrame(frame, prevFrame, vpx); % получение кадра градиентов
    centers = getCenterMassList(difFrame); % ищем центры областей на кадре градиентов
-%    centers1 = centers; % нужно только для отрисовки найденных центров
+   centers1 = centers; % нужно только для отрисовки найденных центров
    [centers,~] = groupCenters2(centers, R); % группируем центры областей по радиусу R. Получаем центры машин (одна машина - как минимум область спереди и сзади)
    pairs = makePairs(centers, prevCenters, R); % сравниваем центры с предыдущим кадром, объединяем в пару 'было - стало'
    cars = makeCars(pairs, mapLength, mapWidth, camHeigh, camWidth, heigh); % по координатам центров вычисляем информацию о машинах
 
   % отрисовка 
-   imshow(originFrame);
+   imshow(difFrame);
    hold on
    if (length(centers)~=0)
        drawCars(cars); % рисуем центры машин и текст
