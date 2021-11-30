@@ -1,4 +1,5 @@
 close all
+clear all
 
 speed = 3; % скорость движения в метрах в секунду
 heigh = 50; % высота в метрах
@@ -33,46 +34,27 @@ vpx = round(camHeigh/mapLength * speed);
 vpx = 1
 R = 20
 
-
+kadr=1;
 while reader.hasFrame()
    frame = reader.readFrame();
-    
+   kadr=kadr+1
+   
+   originFrame = frame;
    frame = rgb2gray(frame);
    frame = imadjust(frame,[0 1], [0 1], 5);
    difFrame = getDifFrame(frame, prevFrame, vpx);   
    centers = getCenterMassList(difFrame);
-   centers1 = centers
+   centers1 = centers;
    [centers,~] = groupCenters2(centers, R);
-   
    pairs = makePairs(centers, prevCenters, R);
-   if (size(centers,1)~=0)
-     c1 = centers(1,:)
-   end
-   if (length(pairs)~=0)
-       p1 = pairs{1}
-   end
-   
    cars = makeCars(pairs, mapLength, mapWidth, camHeigh, camWidth, heigh);
-   if (size(cars,1)~=0)
-       cr1 = cars{1}
-   end
+
    
-   
-%    velocities = zeros(length(objects),2);
-%    for i=1:length(objects)
-%        pair = objects{i}
-%        if (size(pair,1)~=2)
-%            disp("Error")
-%        else
-%            velocities(i,:) = pair(2,:) - pair(1,:);
-%        end
-%    end
-%    velocities
-   
-   imshow(frame);
+   imshow(originFrame);
    hold on
+   plot(camWidth/2, camHeigh/2, 'y*')
    if (length(centers)~=0)
-%        plot(centers1(:,1), centers1(:,2), 'b*');
+       plot(centers1(:,1), centers1(:,2), 'b*');
 %        plot(centers(:,1), centers(:,2), 'g*');
        
        for i=1:length(pairs)

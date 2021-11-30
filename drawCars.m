@@ -19,6 +19,7 @@ hold on
 plot(centers(:,1), centers(:,2), 'r*');
 
 for i=1:size(cars,1)
-    text(centers(i,1)+15,centers(i,2), strjoin(string([round(centers(i,1)),round(centers(i,2))])),'color','white');
-    text(centers(i,1)+15,centers(i,2)+15, string(round(distances(i))),'color','yellow');
+    text(centers(i,1)+15,centers(i,2)-15, strcat("x = ", string(round(centers(i,1))), ", y = " ,string(round(centers(i,2)))),'color','white');
+    text(centers(i,1)+15,centers(i,2), strcat("d = ",string(round(distances(i))), " m"),'color','yellow');
+    text(centers(i,1)+15,centers(i,2)+15, strcat("v = ",string(round(velocities(i))), " m/s"),'color','white');
 end

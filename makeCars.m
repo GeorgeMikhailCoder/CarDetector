@@ -8,42 +8,48 @@ beta = 84; % вертикальный угол обзора камеры в градусах
 mapLength = tand(beta/2)*heigh*2; % длина карты на плоскости
 mapWidth = tand(alpha/2)*heigh*2; % ширина карты на плоскости
 
+% pair1 =[
+%   707.1000   23.7167;
+%   706.8793   29.9310
+%   ];
+% pair2 =[
+%   739.7448  484.0239;
+%   742.0037  495.8301
+% ];
+
 pair1 =[
-  707.1000   23.7167;
-  706.8793   29.9310
+  1280/2 720/2   ;
+  1280/2  720/2 - 4
   ];
 pair2 =[
-  739.7448  484.0239;
-  742.0037  495.8301
-];
-pairs = {pair1; pair2}
+  1280/2 720/2   ;
+  1280/2 + 6  720/2 - 4
+  ];
+
+pairs = {pair1; pair2};
 end
 
-
-
-kW = mapWidth/camWidth;
 kL = mapLength/camHeigh;
-camCoord = [mapWidth/2, mapLength/2];
+kW = mapWidth/camWidth;
+koef = [kL kW];
+
+camCenterPX = [camWidth/2  camHeigh/2];
+camCenterReal = [mapWidth/2  camWidth/2];
 
 res = [];
 for i=1:length(pairs)
    pair = pairs{i,:};
-   
+      
    if (size(pair,1)==2)
-       coord = pair(1,:);
+       coordCar = pair(1,:);
        
-       dx = kW*(coord(1) - camCoord(1));
-       dy = kL*(coord(2) - camCoord(2));
-       dz = heigh;
+       deltaCarPX = coordCar - camCenterPX;
+       deltaCarReal = deltaCarPX.*koef;
+       carReal = deltaCarReal + camCenterReal;
        
-       d = sqrt(dx^2 + dy^2 + dz^2);
-       
-       %%%%%%%%
-       v = pair(2,:) - pair(1,:);
-       v1 = kW*v(1);
-       v2 = kL*v(2);
-       v = sqrt(v1^2 + v2^2);
-       
+       v = deltaCarReal;       
+       d = sqrt( sum(deltaCarReal.^2) + heigh^2 );
+              
        car = {pair(1,:), d, v};
        res = [res; car];
    end
