@@ -1,4 +1,4 @@
-function res = makeCars(pairs, mapLength, mapWidth, camHeigh, camWidth, heigh)
+function res = makeCars(pairs, mapLength, mapWidth, camHeigh, camWidth, heigh, FPS)
 % ‘ункци€ вычисл€ет информацию о машинах. 
 % –езультат - список €чеек (cell), содержищий:
 % - координаты центра машины (в пиксел€х)
@@ -39,7 +39,7 @@ end
 % заполн€ем коэффициенты подоби€ мажду камерой и реальным миром
 kL = mapLength/camHeigh;
 kW = mapWidth/camWidth;
-koef = [kL kW];
+koef_Real_PX = [kL kW];
 
 % координаты камеры (в пиксел€х и метрах, относительно левого верхнего угла)
 camCenterPX = [camWidth/2  camHeigh/2];
@@ -50,19 +50,21 @@ for i=1:length(pairs)
    pair = pairs{i,:};
       
    if (size(pair,1)==2)
-       coordCar = pair(1,:); % берЄм более поздние координаты центра машины
+       carPX = pair(1,:); % берЄм более поздние координаты центра машины
+       
+       carRealLater = px2real(pair(1,:), camCenterPX, camCenterReal, koef_Real_PX);
+       carRealEarlier = px2real(pair(2,:), camCenterPX, camCenterReal, koef_Real_PX);
        
        % переводим в метры, выполн€€ преобразовани€: сдвиг-раст€жение-сдвиг
-       deltaCarPX = coordCar - camCenterPX;
-       deltaCarReal = deltaCarPX.*koef;
-       carReal = deltaCarReal + camCenterReal;
+       
        
        % вычисл€ем скорость 
-       v = deltaCarReal;       
-       d = sqrt( sum(deltaCarReal.^2) + heigh^2 );
+       v = round(sqrt(sum((carRealLater - carRealEarlier).^2))*FPS*3.6);       
+       d = sqrt( sum((carRealLater - camCenterReal).^2) + heigh^2 );
               
        % заполн€ем 'машину'
        car = {pair(1,:), d, v};
+
        res = [res; car];
    end
 end

@@ -9,6 +9,7 @@ alpha = 84; % горизонтальный угол обзора камеры в градусах
 beta = 84; % вертикальный угол обзора камеры в градусах
 FPS = 24; % частота кадров видеосъёмки
 R = 3; % радиус отождествления точек в метрах
+frameRate = 10; % частота записи выходного видео
 
 mapLength = tand(beta/2)*heigh*2; % длина карты на плоскости
 mapWidth = tand(alpha/2)*heigh*2; % ширина карты на плоскости
@@ -18,6 +19,7 @@ mapWidth = tand(alpha/2)*heigh*2; % ширина карты на плоскости
 % создаем объект для чтения видео
 reader = VideoReader('src.mp4');
 writer = VideoWriter(resultFileName);
+writer.FrameRate = frameRate;
 open(writer);
  
 % проверка на пустое видео
@@ -46,7 +48,7 @@ while reader.hasFrame()
    originFrame = frame;
    kadr=kadr+1;
    
-   if (kadr>100)
+   if (kadr>50)
        break;
    end
    
@@ -58,7 +60,7 @@ while reader.hasFrame()
    centers1 = centers; % нужно только для отрисовки найденных центров
    [centers,~] = groupCenters2(centers, R); % группируем центры областей по радиусу R. Получаем центры машин (одна машина - как минимум область спереди и сзади)
    pairs = makePairs(centers, prevCenters, R); % сравниваем центры с предыдущим кадром, объединяем в пару 'было - стало'
-   cars = makeCars(pairs, mapLength, mapWidth, camHeigh, camWidth, heigh); % по координатам центров вычисляем информацию о машинах
+   cars = makeCars(pairs, mapLength, mapWidth, camHeigh, camWidth, heigh, FPS); % по координатам центров вычисляем информацию о машинах
 
   % отрисовка 
    imshow(originFrame);
