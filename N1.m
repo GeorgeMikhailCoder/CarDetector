@@ -48,9 +48,9 @@ while reader.hasFrame()
    originFrame = frame;
    kadr=kadr+1;
    
-   if (kadr>50)
-       break;
-   end
+%    if (kadr>50)
+%        break;
+%    end
    
    % обработка картинки
    frame = rgb2gray(frame); % перевод в ч/б (оттенки серого)
@@ -89,5 +89,6 @@ while reader.hasFrame()
    prevFrame = frame;
    prevCenters = centers;
    pause(0.001)
+   hold off
 end
 close(writer);
