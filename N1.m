@@ -1,6 +1,8 @@
 close all
 clear all
 
+resultFileName = 'tmp.avi';
+
 speed = 3; % скорость движения в метрах в секунду
 heigh = 50; % высота в метрах
 alpha = 84; % горизонтальный угол обзора камеры в градусах
@@ -15,7 +17,9 @@ mapWidth = tand(alpha/2)*heigh*2; % ширина карты на плоскости
 
 % создаем объект для чтения видео
 reader = VideoReader('src.mp4');
-
+writer = VideoWriter(resultFileName);
+open(writer);
+ 
 % проверка на пустое видео
 if ~reader.hasFrame()
     return
@@ -35,11 +39,16 @@ R = camHeigh/mapLength * R;
 % vpx = round(camHeigh/mapLength * speed);
 
 vpx = 1;
-
+kadr=0;
 while reader.hasFrame()
    % покадрово читаем все видео
    frame = reader.readFrame();
    originFrame = frame;
+   kadr=kadr+1;
+   
+   if (kadr>100)
+       break;
+   end
    
    % обработка картинки
    frame = rgb2gray(frame); % перевод в ч/б (оттенки серого)
@@ -72,9 +81,11 @@ while reader.hasFrame()
 %    end
 %    plot(camWidth/2, camHeigh/2, 'y*') % центр камеры
 
-
+    img = getframe();
+    writeVideo(writer,img);
    % запоминаем последний кадр и центры, делаем 'устаревание'
    prevFrame = frame;
    prevCenters = centers;
    pause(0.001)
 end
+close(writer);
